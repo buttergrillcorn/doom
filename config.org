@@ -337,7 +337,7 @@ Core Denote and Denote-org configuration.
   
   ;; Known keywords
   (setq denote-known-keywords nil)
-  (setq denote-date-prompt-use-org-read-date t)
+  (setq denote-date-prompt-use-org-read-date t))
 #+end_src
 ***** Key Binds
 #+begin_src emacs-lisp :tangle config.el
@@ -540,7 +540,6 @@ It would show up something like this instead:
 ;; Apply the override
 (advice-add 'denote-file-prompt :override #'my-denote-file-prompt)
 #+end_src
-
 **** Git Sync
 Automatic git sync for denote notes directory. Commits and pushes changes on save with smart commit messages, conflict handling, and offline support.
 ***** Configuration
