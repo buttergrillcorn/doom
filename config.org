@@ -60,9 +60,6 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 
 #+end_src
 * Init.el :enabled:
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
 Doom modules to enable are defined below.
 ** Input
 Enabled Chinese optimisations.
