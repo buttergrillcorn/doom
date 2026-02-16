@@ -59,7 +59,7 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #+end_src
-* Init (Variables) :enabled:
+* Init (Variables)
 Doom modules to enable are defined below.
 ** Input
 Enabled Chinese optimisations.
@@ -197,19 +197,15 @@ everywhere
 ;; literate
 (default +bindings +smartparens)
 #+end_src
-* Core (Variables)
+* Core :enabled:
 These are core Emacs/Doom settings.
-** User Information
+** Variables
+*** User Information
 #+name: name
 #+begin_src text
 Yu Li (James)
 #+end_src
-*** Code
-#+begin_src emacs-lisp
-(setq user-full-name <<name>>
-      user-mail-address <<email>>) 
-#+end_src
-** Font
+*** Font
 #+name: default-font
 #+begin_src text
 Maple Mono NF CN
@@ -230,33 +226,35 @@ Symbols Nerd Font Mono
 #+begin_src text
 Symbols Nerd Font Mono
 #+end_src
-*** Code
-#+begin_src emacs-lisp
+*** Theme
+#+name: theme
+#+begin_src text
+doom-one
+#+end_src
+** Code
+#+begin_src emacs-lisp config.el
+(setq user-full-name <<name>>
+      user-mail-address <<email>>) 
 (setq doom-font (font-spec :family <<default-font>> :size 16 :weight 'Regular)
       doom-variable-pitch-font (font-spec :family <<variable-font>> :size 16)
       doom-serif-font (font-spec :family <<serif-font>> :size 16)
       doom-symbol-font (font-spec :family <<symbol-font>> :size 16)
       doom-unicode-font (font-spec :family <<unicode-font>> :size 16))
-#+end_src
-** Theme
-#+name: theme
-#+begin_src text
-doom-one
-#+end_src
-*** Code
-#+begin_src emacs-lisp
 (setq doom-theme '<<theme>>)
 #+end_src
 * Quality of Life :enabled:
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 ** Which-key Buffer
 Map =Ctrl n/p= to cyble =which-key= buffer pages. 
-#+begin_src emacs-lisp config.el
+#+begin_src emacs-lisp
 (map! :map which-key-mode-map "C-n" #'which-key-show-next-page-no-cycle)
 (map! :map which-key-mode-map "C-p" #'which-key-show-previous-page-no-cycle)
 #+end_src
 ** Snipping
 Make =s= to use =avy= instead, mimicing =flash.nvim=.
-#+begin_src emacs-lisp config.el
+#+begin_src emacs-lisp
 (after! evil-snipe
   (setq evil-snipe-scope 'visible
         evil-snipe-smart-case 1)
@@ -265,9 +263,6 @@ Make =s= to use =avy= instead, mimicing =flash.nvim=.
 #+end_src
 * Org Mode
 Make sure to =enable= "Extras" packages/modules with *:enabled:* tag.
-:PROPERTIES:
-:header-args: :tangle config.el
-:END:
 ** Variables
 Org mode notes directory.
 #+name: org-dir
@@ -275,6 +270,9 @@ Org mode notes directory.
 ~/denote
 #+end_src
 ** Core :enabled:
+:PROPERTIES:
+:header-args: :tangle config.el
+:END:
 Core/basic org mode configurations.
 *** Directory
 #+begin_src emacs-lisp
