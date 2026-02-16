@@ -1,0 +1,891 @@
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+#+title: My Literate Doom Emacs Configuration
+#+property: header-args :mkdirp yes :noweb yes
+#+auto_tangle: t
+This my "literate" Doom Emacs configuration using org mode and babel tangle.
+* Bootstraps :enabled:
+Placeholder file templates for default Doom configuration files: =init.el= =config.el= =packages.el=.
+#+name: init.el
+#+begin_src emacs-lisp :tangle tangle/init.el
+;;; init.el -*- lexical-binding: t; -*-
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;  DO NOT EDIT DIRECTLY, THIS FILE IS AUTO-GENERATED WITH ORG-BABEL-TANGLE!  ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(doom! :input
+       <<input>>
+       :completion
+       <<completion>>
+       :ui
+       <<ui>>
+       :editor
+       <<editor>>
+       :emacs
+       <<emacs>>
+       :term
+       <<term>>
+       :checkers
+       <<checker>>
+       :tools
+       <<tools>>
+       :os
+       <<os>>
+       :lang
+       <<lang>>
+       :email
+       <<email>>
+       :app
+       <<app>>
+       :config
+       <<config>>
+)
+#+end_src
+#+name: config.el
+#+begin_src emacs-lisp :tangle tangle/config.el
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;  DO NOT EDIT DIRECTLY, THIS FILE IS AUTO-GENERATED WITH ORG-BABEL-TANGLE!  ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#+end_src
+#+name: packages.el
+#+begin_src emacs-lisp :tangle tangle/packages.el
+;; no-byte-compile: t; -*-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;  DO NOT EDIT DIRECTLY, THIS FILE IS AUTO-GENERATED WITH ORG-BABEL-TANGLE!  ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#+end_src
+* Init.el :enabled:
+:PROPERTIES:
+:header-args: :tangle tangle/init.el
+:END:
+Doom modules to enable are defined below.
+** Input
+Enabled Chinese optimisations.
+#+name: input
+#+begin_src emacs-lisp
+chinese
+#+end_src
+** Completion
+Enable =corfu= and =vertico= for completion.
+#+name: completion
+#+begin_src emacs-lisp
+(corfu +icons +orderless)
+(vertico +icons)
+#+end_src
+** UI
+UI plugins/packages to use
+#+name: ui
+#+begin_src emacs-lisp
+doom
+doom-dashboard
+doom-quit
+(emoji +unicode)
+hl-todo
+hydra
+indent-guides
+ligatures
+modeline
+nav-flash
+ophints
+popup
+(treemacs +lsp)
+unicode
+(vc-gutter +pretty)
+vi-tilde-fringe
+window-select
+workspaces
+zen
+#+end_src
+
+** Editor
+Editor packages to enable.
+#+name: editor
+#+begin_src emacs-lisp
+(evil +everywhere)
+file-templates    
+fold              
+(format +onsave +lsp)
+parinfer          
+rotate-text
+snippets          
+word-wrap         
+#+end_src
+
+** Emacs
+Emacs enhancements
+#+name: emacs
+#+begin_src emacs-lisp
+(dired +icon +dirvish)
+electric
+(ibuffer +icons)
+tramp
+undo
+vc
+#+end_src
+** Term
+Terminals to enable.
+#+name: term
+#+begin_src emacs-lisp
+vterm
+#+end_src
+
+** Checkers
+Spell/syntax/grammar checkers.
+#+name: checkers
+#+begin_src emacs-lisp
+(syntax +flymake +icons)
+(spell +aspell)
+#+end_src
+
+** Tools
+Tools...
+#+name: tools
+#+begin_src emacs-lisp
+(eval +overlay)
+(lookup +dictionary)
+(lsp +peek)
+magit
+make
+pdf
+rgb
+tree-sitter
+#+end_src
+
+** OS
+OS settings.
+#+name: os
+#+begin_src emacs-lisp
+(:if (featurep :system 'macos) macos)
+tty
+#+end_src
+
+** Lang
+Programming languages.
+#+name: lang
+#+begin_src emacs-lisp
+emacs-lisp
+(json +lsp)
+(javascript +lsp +tree-sitter)
+(latex +cdlatex +lsp)
+(lua +lsp +tree-sitter +fennel) 
+(markdown +grip +tree-sitter)
+(org +dragndrap +hugo +pandoc +pomodoro +present +roam)
+(python +lsp +tree-sitter)
+(rust +lsp +tree-sitter)
+(sh +lsp)
+(web +lsp +tree-sitter)
+(yaml +lsp +tree-sitter)
+#+end_src
+** Email
+Email in Emacs...
+#+name: email
+#+begin_src emacs-lisp
+#+end_src
+** App
+Applications...?
+#+name: app
+#+begin_src emacs-lisp
+calendar
+everywhere
+#+end_src
+
+** Config
+#+name: config
+#+begin_src emacs-lisp
+literate
+(default +bindings +smartparens)
+#+end_src
+* Core :enabled:
+:PROPERTIES:
+:header-args: :tangle tangle/config.el
+:END:
+These are core Emacs/Doom settings.
+** User Information
+#+name: name
+#+begin_src text
+Yu Li (James)
+#+end_src
+*** Code
+#+begin_src emacs-lisp
+(setq user-full-name <<name>>
+      user-mail-address <<email>>) 
+#+end_src
+** Font
+#+name: default-font
+#+begin_src text
+Maple Mono NF CN
+#+end_src
+#+name: variable-font
+#+begin_src text
+Noto Sans CJK SC
+#+end_src
+#+name: serif-font
+#+begin_src text
+Noto Serif CJK SC
+#+end_src
+#+name: symbol-font
+#+begin_src text
+Symbols Nerd Font Mono
+#+end_src
+#+name: unicode-font
+#+begin_src text
+Symbols Nerd Font Mono
+#+end_src
+*** Code
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family <<default-font>> :size 16 :weight 'Regular)
+      doom-variable-pitch-font (font-spec :family <<variable-font>> :size 16)
+      doom-serif-font (font-spec :family <<serif-font>> :size 16)
+      doom-symbol-font (font-spec :family <<symbol-font>> :size 16)
+      doom-unicode-font (font-spec :family <<unicode-font>> :size 16))
+#+end_src
+** Theme
+#+name: theme
+#+begin_src text
+doom-one
+#+end_src
+*** Code
+#+begin_src emacs-lisp
+(setq doom-theme '<<theme>>)
+#+end_src
+** Quality of Life
+*** Which-key Buffer
+Map =Ctrl n/p= to cyble =which-key= buffer pages. 
+#+begin_src emacs-lisp
+(map! :map which-key-mode-map "C-n" #'which-key-show-next-page-no-cycle)
+(map! :map which-key-mode-map "C-p" #'which-key-show-previous-page-no-cycle)
+#+end_src
+*** Snipping
+Make =s= to use =avy= instead, mimicing =flash.nvim=.
+#+begin_src emacs-lisp
+(after! evil-snipe
+  (setq evil-snipe-scope 'visible
+        evil-snipe-smart-case 1)
+  (evil-define-key '(normal motion) evil-snipe-local-mode-map
+    "s" 'evil-avy-goto-char-timer))
+#+end_src
+* Org Mode
+Make sure to =enable= "Extras" packages/modules with *:enabled:* tag.
+:PROPERTIES:
+:header-args: :tangle tangle/config.el
+:END:
+** Variables
+Org mode notes directory.
+#+name: org-dir
+#+begin_src text
+~/denote
+#+end_src
+** Core :enabled:
+Core/basic org mode configurations.
+*** Directory
+#+begin_src emacs-lisp
+(setq org-directory "<<org-dir>>"
+      org-agenda-files '("<<org-dir>>"))
+#+end_src
+*** Babel Languages
+#+begin_src emacs-lisp
+(after! org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '(
+     (elisp . t)
+     (emacs-lisp . t)
+     (lua . t)
+     (makefile . t)
+     (js . t)
+     (css . t)
+     (shell . t)
+     (python . t)
+     (rust . t))))
+#+end_src
+** Extras
+Make sure to *enable* each module by add the :enabled: tag.
+*** Auto Tangle :enabled:
+Auto tangle files upon save, using the =#+auto_tangle: t= file property.
+**** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! org-autolist)
+#+end_src
+**** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(add-hook! org-mode-hook #'org-auto-tangle-mode)
+;; Files to blacklist
+(setq org-auto-tangle-babel-safelist '(
+                                       "~/example.org"
+                                       "~/example2.org"))
+#+end_src
+*** Denote :enabled:
+**** Core
+Core Denote and Denote-org configuration.
+***** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! denote)
+(package! denote-org)
+#+end_src
+***** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! denote
+  :hook
+  (dired-mode . denote-dired-mode)
+  :config
+  (setq denote-directory "<<org-dir>>")
+  (setq denote-file-type 'org)
+  
+  ;; Rename Denote buffers
+  (denote-rename-buffer-mode 1)
+  (setq denote-buffer-name-prefix "<NOTE> ")
+  (setq denote-rename-buffer-format "[%k] %t")
+  
+  ;; Known keywords
+  (setq denote-known-keywords nil)
+  (setq denote-date-prompt-use-org-read-date t)
+#+end_src
+***** Key Binds
+#+begin_src emacs-lisp :tangle tangle/config.el
+(map! :leader
+      (:prefix-map ("d" . "denote")
+       :desc "new note" "n" #'denote
+       :desc "new note + date" "N" #'denote-date
+       ;; :desc "new note in subdir" "s" #'denote-subdirectory
+       :desc "list all notes" "D" #'denote-menu-list-notes
+       :desc "open/create note" "d" #'denote-open-or-create
+       :desc "find link" "l" #'denote-find-link
+       :desc "backlinks" "b" #'denote-backlinks
+       :desc "backlinks for heading" "B" #'denote-org-backlinks-for-heading
+       :desc "template" "t" #'denote-template
+       :desc "capture region" "c" #'denote-region
+       :desc "heading as note" "h" #'denote-org-extract-org-subtree
+       (:prefix ("i" . "insert")
+        :desc "insert/create link" "l" #'denote-link-or-create
+        :desc "insert/create link in bg" "L" #'denote-link-after-creating
+        :desc "insert front matter" "f" #'denote-add-front-matter
+        :desc "insert heading link" "h" #'denote-org-link-to-heading
+        :desc "insert link matching REGEXP" "r" #'denote-add-links
+        (:prefix ("d" . "dynamic blocks")
+         :desc "links" "l" #'denote-org-dblock-insert-links
+         :desc "backlinks" "b" #'denote-org-dblock-insert-backlinks
+         :desc "files" "f" #'denote-org-dblock-insert-files
+         :desc "files (headings)" "f" #'denote-org-dblock-insert-files-as-headings
+         :desc "missing links" "m" #'denote-org-dblock-insert-missing-links))
+       (:prefix ("r" . "rename")
+        :desc "rename note" "r" #'denote-rename-file
+        :desc "rename keyword" "k" #'denote-rename-file-keywords
+        :desc "rename signature" "s" #'denote-rename-file-signature
+        :desc "rename front matter" "f" #'denote-rename-file-using-front-matter
+        :desc "rename title" "t" #'denote-rename-file-title)))
+#+end_src
+**** Consult
+***** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! consult-denote)
+#+end_src
+***** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! consult-denote
+  :config
+  (consult-denote-mode 1))
+#+end_src
+***** Key Binds
+#+begin_src emacs-lisp :tangle tangle/config.el
+(map! :leader
+      (:prefix-map ("d" . "denote")
+       :desc "Search notes" "s" #'consult-denote-find
+       :desc "Search notes w/grep" "S" #'consult-denote-grep))
+#+end_src
+
+**** Journal
+***** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! denote-journal)
+#+end_src
+***** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! denote-journal
+  :after denote
+  :config
+  (setq denote-journal-title-format "%Y-%m-%d"))
+#+end_src
+***** Key Binds
+#+begin_src emacs-lisp :tangle tangle/config.el
+(map! :leader
+      (:prefix-map ("d" . "denote")
+       :desc "find/create journal" "j" #'denote-journal-new-or-existing-entry
+       :desc "find/create journal w/date" "J" #'(lambda ()
+                                                  (interactive)
+                                                  (let ((current-prefix-arg '(4)))
+                                                    (call-interactively #'denote-journal-new-or-existing-entry)))
+       (:prefix ("i" . "insert")
+        :desc "insert journal link" "j" #'denote-journal-link-or-create-entry
+        :desc "insert journal link w/date" "J" #'(lambda ()
+                                                   (interactive)
+                                                   (let ((current-prefix-arg '(4)))
+                                                     (call-interactively #'denote-journal-link-or-create-entry))))))
+#+end_src
+
+**** Explore
+***** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! denote-explore)
+#+end_src
+***** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! denote-explore
+  :after denote
+  :config
+  (require 'denote))
+#+end_src
+***** Key Binds
+#+begin_src emacs-lisp :tangle tangle/config.el
+(after! denote-explore
+  (map! :leader
+        (:prefix ("d" . "denote")
+                 (:prefix ("e" . "explore")
+                  :desc "network" "n" #'denote-explore-network
+                  :desc "network regenerate" "N" #'denote-explore-network-regenerate
+
+                  (:prefix ("c" . "count")
+                   :desc "notes" "n" #'denote-explore-count-notes
+                   :desc "keywords" "k" #'denote-explore-count-keywords)
+
+                  (:prefix ("b" . "bar chart")
+                   :desc "file types" "f" #'denote-explore-barchart-filetypes
+                   :desc "keywords" "k" #'denote-explore-barchart-keywords
+                   :desc "timeline" "t" #'denote-explore-barchart-timeline
+                   :desc "degree" "d" #'denote-explore-barchart-degree
+                   :desc "backlinks" "b" #'denote-explore-barchart-backlinks)
+
+                  (:prefix ("r" . "random walks")
+                   :desc "note" "n" #'denote-explore-random-note
+                   :desc "regex" "r" #'denote-explore-random-regex
+                   :desc "link" "l" #'denote-explore-random-link
+                   :desc "keyword" "k" #'denote-explore-random-keyword)
+
+                  (:prefix ("j" . "janitor")
+                   :desc "duplicate notes" "d" #'denote-explore-duplicate-notes
+                   :desc "duplicate notes(dired)" "D" #'denote-explore-duplicate-notes-dired
+                   :desc "missing links" "l" #'denote-explore-missing-links
+                   :desc "zero keywords" "z" #'denote-explore-zero-keywords
+                   :desc "single keywords" "k" #'denote-explore-single-keywords
+                   :desc "rename keywords" "r" #'denote-explore-rename-keywords
+                   :desc "sync metadata" "s" #'denote-explore-sync-metadata
+                   :desc "isolated files" "i" #'denote-explore-isolated-files)))))
+#+end_src
+***** Temporary Solution
+Temporary solution for "denote-id-regexp" being obsolete in the new version of Denote.
+#+begin_src emacs-lisp :tangle no
+(after! denote
+  (unless (boundp 'denote-id-regexp)
+    ;; Try to find the actual variable name in your denote version
+    (setq denote-id-regexp
+          (or (and (boundp 'denote-identifier-regexp) denote-identifier-regexp)
+              "[0-9]\\{8\\}T[0-9]\\{6\\}"))))  ; fallback pattern
+#+end_src
+
+**** Completion Formatting
+Custom functions to make the formatting of calling =denote-open-or-create= to be cleaner.
+It would show up something like this instead:
+|-----------------------------------------------------------------------------|
+| Find file: note t_                                                          |
+|-----------------------------------------------------------------------------|
+| [ 2003-09-01 ] note title                                 keyword1 keyword2 |
+|                                                                             |
+|-----------------------------------------------------------------------------|
+#+begin_src emacs-lisp :tangle tangle/config.el
+;; Simple denote completion formatting
+(defun my-format-denote-candidate (file)
+  "Format denote file for completion display with right-aligned keywords."
+  (when (string-match-p "[0-9]\\{8\\}T[0-9]\\{6\\}" file)
+    (let* ((full-path (expand-file-name file (denote-directory)))
+           (date-str (ignore-errors (denote-retrieve-filename-identifier full-path)))
+           (title (ignore-errors (denote-retrieve-filename-title full-path)))
+           (keywords (ignore-errors (denote-retrieve-filename-keywords full-path))))
+      (when date-str
+        (let* ((formatted-date (format "[ %s-%s-%s ]"
+                                       (substring date-str 0 4)
+                                       (substring date-str 4 6)
+                                       (substring date-str 6 8)))
+               (formatted-title (if title
+                                    (replace-regexp-in-string "-" " " title)
+                                  ""))
+               (formatted-keywords (cond
+                                    ((listp keywords)
+                                     (mapconcat (lambda (k) (replace-regexp-in-string "_" " " k)) keywords " "))
+                                    ((stringp keywords)
+                                     (replace-regexp-in-string "_" " " keywords))
+                                    (t "")))
+               ;; Calculate padding to right-align keywords dynamically
+               (left-part (format "%s %s" formatted-date formatted-title))
+               (window-width (window-width (minibuffer-window)))
+               (padding-needed (max 1 (- window-width (length left-part) (length formatted-keywords) 2)))
+               (padding (make-string padding-needed ?\s)))
+
+          (if (and formatted-keywords (not (string-empty-p formatted-keywords)))
+              (format "%s%s%s" left-part padding formatted-keywords)
+            left-part))))))
+
+;; Override the denote file prompt function
+(defun my-denote-file-prompt (&optional files-matching-regexp prompt-text no-require-match &rest _ignore)
+  "Custom denote file prompt with formatted display."
+  (let* ((files (denote-directory-files files-matching-regexp))
+         (file-alist (mapcar (lambda (file)
+                               (let* ((relative-file (denote-get-file-name-relative-to-denote-directory file))
+                                      (formatted (my-format-denote-candidate relative-file)))
+                                 (cons (or formatted relative-file) file)))
+                             files))
+         (choice (completing-read
+                  (or prompt-text "Select file: ")
+                  file-alist nil
+                  (unless no-require-match :require-match))))
+    (cdr (assoc choice file-alist))))
+
+;; Apply the override
+(advice-add 'denote-file-prompt :override #'my-denote-file-prompt)
+#+end_src
+
+**** Git Sync
+Automatic git sync for denote notes directory. Commits and pushes changes on save with smart commit messages, conflict handling, and offline support.
+***** Configuration
+#+begin_src elisp :tangle tangle/config.el
+;; Denote Git Sync Configuration
+(defvar denote-git-auto-sync-enabled t
+  "Enable automatic git sync on save for denote files.")
+
+(defvar denote-git-directory (expand-file-name "<<org-dir>>")
+  "Path to the denote notes directory.")
+
+(defvar denote-git-remote-name "origin"
+  "Git remote name to sync with.")
+
+(defvar denote-git-branch "main"
+  "Git branch name to sync with.")
+
+(defvar denote-git-sync-in-progress nil
+  "Lock to prevent concurrent sync operations.")
+
+(defvar denote-git-periodic-sync-interval (* 15 60)
+  "Interval in seconds for periodic sync (default: 15 minutes).")
+
+(defvar denote-git-idle-sync-delay (* 5 60)
+  "Idle time in seconds before triggering sync (default: 5 minutes).")
+
+(defvar denote-git-periodic-timer nil
+  "Timer object for periodic sync.")
+
+(defvar denote-git-idle-timer nil
+  "Timer object for idle sync.")
+#+end_src
+***** Helper Functions
+#+begin_src elisp :tangle tangle/config.el
+;; Helper: Check if file is in denote directory
+(defun denote-in-denote-directory-p ()
+  "Return t if current buffer file is in denote directory."
+  (when buffer-file-name
+    (string-prefix-p (expand-file-name denote-git-directory)
+                     (expand-file-name buffer-file-name))))
+
+;; Helper: Check if git repository exists
+(defun denote-git-check-repo ()
+  "Check if denote directory is a git repository."
+  (let ((default-directory denote-git-directory))
+    (= 0 (call-process "git" nil nil nil "rev-parse" "--git-dir"))))
+
+;; Helper: Check internet connectivity
+(defun denote-git-check-connectivity ()
+  "Check if we can reach the git remote (basic connectivity test)."
+  (let ((default-directory denote-git-directory))
+    (= 0 (call-process "git" nil nil nil "ls-remote" "--exit-code" "-h" denote-git-remote-name))))
+
+;; Helper: Generate smart commit message
+(defun denote-git-format-commit-message ()
+  "Generate a commit message based on changed files and timestamp."
+  (let* ((default-directory denote-git-directory)
+         (timestamp (format-time-string "%Y-%m-%d %H:%M:%S"))
+         (status-output (shell-command-to-string "git status --short"))
+         (lines (split-string status-output "\n" t))
+         (changed-files (mapcar (lambda (line)
+                                  (if (string-match "^[AMD?]+ +\\(.+\\)$" line)
+                                      (file-name-nondirectory (match-string 1 line))
+                                    nil))
+                                lines))
+         (changed-files (delq nil changed-files))
+         (file-count (length changed-files)))
+    (cond
+     ((= file-count 0)
+      (format "Update notes: %s" timestamp))
+     ((= file-count 1)
+      (format "Update %s\n\n%s" (car changed-files) timestamp))
+     ((<= file-count 3)
+      (format "Update %s\n\n%s"
+              (mapconcat 'identity changed-files ", ")
+              timestamp))
+     (t
+      (format "Update %d notes\n\n%s" file-count timestamp)))))
+#+end_src
+***** Core Sync Function
+#+begin_src elisp :tangle tangle/config.el
+;; Core sync function with offline support
+(defun denote-git-sync (&optional quiet)
+  "Safely sync denote directory with git: pull, commit, and push.
+Handles conflicts and offline scenarios gracefully. If QUIET is non-nil, suppress messages."
+  (interactive)
+  (if denote-git-sync-in-progress
+      (unless quiet (message "Denote sync already in progress, skipping..."))
+    (setq denote-git-sync-in-progress t)
+    (let ((default-directory denote-git-directory))
+      (unless (denote-git-check-repo)
+        (setq denote-git-sync-in-progress nil)
+        (error "Denote directory is not a git repository: %s" denote-git-directory))
+
+      ;; Run sync asynchronously
+      (make-process
+       :name "denote-git-sync"
+       :buffer "*denote-git-sync*"
+       :command (list "sh" "-c"
+                      (format "cd '%s' && \
+# Safety check: ensure no merge/rebase in progress
+if [ -f .git/MERGE_HEAD ] || [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then \
+  echo 'GIT_OPERATION_IN_PROGRESS'; \
+  exit 1; \
+fi && \
+# Try to fetch (test connectivity)
+if git fetch %s %s 2>&1; then \
+  echo 'ONLINE'; \
+  # Check for remote changes and merge
+  if ! git diff --quiet HEAD..%s/%s 2>&1; then \
+    if ! git merge --no-edit %s/%s 2>&1; then \
+      git merge --abort 2>&1; \
+      echo 'CONFLICT_DETECTED'; \
+      exit 1; \
+    fi; \
+  fi; \
+  # Check for local changes (modifications, deletions, additions)
+  if [ -z \"$(git status --porcelain)\" ]; then \
+    # No local changes, check for unpushed commits
+    if git log %s/%s..HEAD 2>&1 | grep -q 'commit'; then \
+      git push %s %s 2>&1 && echo 'PUSH_SUCCESS'; \
+    else \
+      echo 'NO_CHANGES'; \
+    fi; \
+  else \
+    # Has local changes (including deletions), commit and push
+    git add -A 2>&1 && \
+    git commit -m \"$(cat <<'COMMIT_MSG_EOF'\n%s\nCOMMIT_MSG_EOF\n)\" 2>&1 && \
+    git push %s %s 2>&1 && echo 'SYNC_SUCCESS'; \
+  fi; \
+else \
+  # Offline mode - commit locally only
+  echo 'OFFLINE'; \
+  if [ -n \"$(git status --porcelain)\" ]; then \
+    git add -A 2>&1 && \
+    git commit -m \"$(cat <<'COMMIT_MSG_EOF'\n%s\nCOMMIT_MSG_EOF\n)\" 2>&1 && \
+    echo 'OFFLINE_COMMIT_SUCCESS'; \
+  else \
+    echo 'OFFLINE_NO_CHANGES'; \
+  fi; \
+fi"
+                              denote-git-directory
+                              denote-git-remote-name
+                              denote-git-branch
+                              denote-git-remote-name
+                              denote-git-branch
+                              denote-git-remote-name
+                              denote-git-branch
+                              denote-git-remote-name
+                              denote-git-branch
+                              denote-git-remote-name
+                              denote-git-branch
+                              (denote-git-format-commit-message)
+                              denote-git-remote-name
+                              denote-git-branch
+                              (denote-git-format-commit-message)))
+       :sentinel
+       (lambda (process event)
+         (setq denote-git-sync-in-progress nil)
+         (let ((output (with-current-buffer (process-buffer process)
+                         (buffer-string))))
+           (cond
+            ((string-match-p "GIT_OPERATION_IN_PROGRESS" output)
+             (unless quiet
+               (message "⚠ Denote sync: Git operation in progress, skipping...")))
+            ((string-match-p "CONFLICT_DETECTED" output)
+             (message "⚠ Denote sync: Merge conflict detected! Please resolve manually in %s"
+                      denote-git-directory)
+             (when (fboundp 'alert)
+               (alert (format "Merge conflict in denote notes!\n\nPlease open %s and resolve conflicts manually."
+                              denote-git-directory)
+                      :title "Denote Git Sync - Conflict"
+                      :severity 'high)))
+            ((string-match-p "SYNC_SUCCESS" output)
+             (unless quiet (message "✓ Denote notes synced successfully")))
+            ((string-match-p "PUSH_SUCCESS" output)
+             (unless quiet (message "✓ Denote notes pushed successfully")))
+            ((string-match-p "OFFLINE_COMMIT_SUCCESS" output)
+             (unless quiet (message "📴 Offline: Changes committed locally (will push when online)")))
+            ((string-match-p "OFFLINE_NO_CHANGES" output)
+             (unless quiet (message "📴 Offline: No changes to commit")))
+            ((string-match-p "NO_CHANGES" output)
+             (unless quiet (message "✓ Denote notes already in sync")))
+            ((string-match-p "fatal\\|error" output)
+             (unless quiet
+               (message "✗ Denote sync failed: %s"
+                        (car (split-string output "\n" t)))))
+            (t
+             (unless quiet (message "✗ Denote sync completed with unknown status"))))))))))
+#+end_src
+***** Auto-Save Hook
+#+begin_src elisp :tangle tangle/config.el
+;; Auto-sync on save hook
+(defun denote-git-auto-sync-on-save ()
+  "Automatically sync denote notes after saving if enabled."
+  (when (and denote-git-auto-sync-enabled
+             (denote-in-denote-directory-p))
+    (denote-git-sync t)))  ; t = quiet mode
+
+;; Add to after-save-hook
+(add-hook 'after-save-hook #'denote-git-auto-sync-on-save)
+***** Startup Sync
+#+begin_src elisp :tangle tangle/config.el
+;; Sync on daemon startup
+(defun denote-git-startup-sync ()
+  "Sync denote notes when Emacs daemon starts."
+  (when (and (daemonp) denote-git-auto-sync-enabled)
+    (run-with-timer 2 nil (lambda () (denote-git-sync t)))))
+
+;; Add to after-init-hook for daemon startup
+(add-hook 'after-init-hook #'denote-git-startup-sync)
+#+end_src
+***** Periodic Sync Timer
+#+begin_src elisp :tangle tangle/config.el
+;; Start periodic sync timer
+(defun denote-git-start-periodic-sync ()
+  "Start periodic sync timer for denote notes."
+  (interactive)
+  (when denote-git-periodic-timer
+    (cancel-timer denote-git-periodic-timer))
+  (setq denote-git-periodic-timer
+        (run-at-time denote-git-periodic-sync-interval
+                     denote-git-periodic-sync-interval
+                     (lambda () (denote-git-sync t))))
+  (message "Denote periodic sync started (every %d minutes)"
+           (/ denote-git-periodic-sync-interval 60)))
+
+;; Stop periodic sync timer
+(defun denote-git-stop-periodic-sync ()
+  "Stop periodic sync timer for denote notes."
+  (interactive)
+  (when denote-git-periodic-timer
+    (cancel-timer denote-git-periodic-timer)
+    (setq denote-git-periodic-timer nil)
+    (message "Denote periodic sync stopped")))
+
+;; Start periodic sync automatically
+(denote-git-start-periodic-sync)
+#+end_src
+***** Idle Sync Timer
+#+begin_src elisp :tangle tangle/config.el
+;; Start idle sync timer
+(defun denote-git-start-idle-sync ()
+  "Start idle sync timer for denote notes."
+  (interactive)
+  (when denote-git-idle-timer
+    (cancel-timer denote-git-idle-timer))
+  (setq denote-git-idle-timer
+        (run-with-idle-timer denote-git-idle-sync-delay t
+                             (lambda () (denote-git-sync t))))
+  (message "Denote idle sync started (after %d minutes idle)"
+           (/ denote-git-idle-sync-delay 60)))
+
+;; Stop idle sync timer
+(defun denote-git-stop-idle-sync ()
+  "Stop idle sync timer for denote notes."
+  (interactive)
+  (when denote-git-idle-timer
+    (cancel-timer denote-git-idle-timer)
+    (setq denote-git-idle-timer nil)
+    (message "Denote idle sync stopped")))
+
+;; Start idle sync automatically
+(denote-git-start-idle-sync)
+#+end_src
+***** Toggle
+#+begin_src elisp :tangle tangle/config.el
+(defun denote-git-toggle-auto-sync ()
+  "Toggle automatic git sync for denote notes."
+  (interactive)
+  (setq denote-git-auto-sync-enabled (not denote-git-auto-sync-enabled))
+  (if denote-git-auto-sync-enabled
+      (progn
+        (denote-git-start-periodic-sync)
+        (denote-git-start-idle-sync))
+    (progn
+      (denote-git-stop-periodic-sync)
+      (denote-git-stop-idle-sync)))
+  (message "Denote auto-sync %s"
+           (if denote-git-auto-sync-enabled "enabled" "disabled")))
+#+end_src
+***** Key Binds
+#+begin_src elisp :tangle tangle/config.el
+(map! :leader
+      (:prefix-map ("d" . "denote")
+                   (:prefix ("g" . "git")
+                    :desc "Sync notes" "s" #'denote-git-sync
+                    :desc "Toggle auto-sync" "t" #'denote-git-toggle-auto-sync)))
+#+end_src
+
+* Pulsar :enabled:
+Never loose your cursor again.
+** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! pulsar)
+#+end_src
+** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! pulsar
+  :init
+  (pulsar-global-mode 1)
+  :config
+  (setq pulsar-delay 0.1
+        pulsar-iterations 20
+        pulsar-face 'pulsar-yellow
+        pulsar-region-face 'pulsar-cyan
+        pulsar-highlight-face 'pulsar-magenta)
+  :hook
+  ((next-error-hook . pulsar-pulse-line)
+   (minibuffer-setup-hook . pulsar-pulse-line-blue)
+   (consult-after-jump-hook . pulsar-recenter-top)
+   (consult-after-jump-hook . pulsar-reveal-entry)))
+#+end_src
+* Ultra Scroll :enabled:
+Ultra smooth scrolling.
+** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! ultra-scroll)
+#+end_src
+** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! ultra-scroll
+  :init
+  (setq scroll-conservatively 3
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+#+end_src
+
+* KDL Mode :enabled:
+=.kdl= file support for Niri WM config.
+** Package
+#+begin_src emacs-lisp :tangle tangle/packages.el
+(package! kdl-mode)
+#+end_src
+** Config
+#+begin_src emacs-lisp :tangle tangle/config.el
+(use-package! kdl-mode
+  :mode "\\.kdl\\'"
+  :config
+  (setq kdl-selection-method 'tree-sitter))
+#+end_src
