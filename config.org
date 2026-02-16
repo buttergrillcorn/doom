@@ -8,7 +8,7 @@ This my "literate" Doom Emacs configuration using org mode and babel tangle.
 * Bootstraps :enabled:
 Placeholder file templates for default Doom configuration files: =init.el= =config.el= =packages.el=.
 #+name: init.el
-#+begin_src emacs-lisp :tangle tangle/init.el
+#+begin_src emacs-lisp :tangle init.el
 ;;; init.el -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -44,7 +44,7 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 )
 #+end_src
 #+name: config.el
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,7 +52,7 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+end_src
 #+name: packages.el
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 ;; no-byte-compile: t; -*-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  DO NOT EDIT DIRECTLY, THIS FILE IS AUTO-GENERATED WITH ORG-BABEL-TANGLE!  ;;;
@@ -61,7 +61,7 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 #+end_src
 * Init.el :enabled:
 :PROPERTIES:
-:header-args: :tangle tangle/init.el
+:header-args: :tangle init.el
 :END:
 Doom modules to enable are defined below.
 ** Input
@@ -202,7 +202,7 @@ literate
 #+end_src
 * Core :enabled:
 :PROPERTIES:
-:header-args: :tangle tangle/config.el
+:header-args: :tangle config.el
 :END:
 These are core Emacs/Doom settings.
 ** User Information
@@ -272,7 +272,7 @@ Make =s= to use =avy= instead, mimicing =flash.nvim=.
 * Org Mode
 Make sure to =enable= "Extras" packages/modules with *:enabled:* tag.
 :PROPERTIES:
-:header-args: :tangle tangle/config.el
+:header-args: :tangle config.el
 :END:
 ** Variables
 Org mode notes directory.
@@ -308,11 +308,11 @@ Make sure to *enable* each module by add the :enabled: tag.
 *** Auto Tangle :enabled:
 Auto tangle files upon save, using the =#+auto_tangle: t= file property.
 **** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! org-autolist)
 #+end_src
 **** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (add-hook! org-mode-hook #'org-auto-tangle-mode)
 ;; Files to blacklist
 (setq org-auto-tangle-babel-safelist '(
@@ -323,12 +323,12 @@ Auto tangle files upon save, using the =#+auto_tangle: t= file property.
 **** Core
 Core Denote and Denote-org configuration.
 ***** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! denote)
 (package! denote-org)
 #+end_src
 ***** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! denote
   :hook
   (dired-mode . denote-dired-mode)
@@ -346,7 +346,7 @@ Core Denote and Denote-org configuration.
   (setq denote-date-prompt-use-org-read-date t)
 #+end_src
 ***** Key Binds
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
        :desc "new note" "n" #'denote
@@ -381,17 +381,17 @@ Core Denote and Denote-org configuration.
 #+end_src
 **** Consult
 ***** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! consult-denote)
 #+end_src
 ***** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! consult-denote
   :config
   (consult-denote-mode 1))
 #+end_src
 ***** Key Binds
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
        :desc "Search notes" "s" #'consult-denote-find
@@ -400,18 +400,18 @@ Core Denote and Denote-org configuration.
 
 **** Journal
 ***** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! denote-journal)
 #+end_src
 ***** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! denote-journal
   :after denote
   :config
   (setq denote-journal-title-format "%Y-%m-%d"))
 #+end_src
 ***** Key Binds
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
        :desc "find/create journal" "j" #'denote-journal-new-or-existing-entry
@@ -429,18 +429,18 @@ Core Denote and Denote-org configuration.
 
 **** Explore
 ***** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! denote-explore)
 #+end_src
 ***** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! denote-explore
   :after denote
   :config
   (require 'denote))
 #+end_src
 ***** Key Binds
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (after! denote-explore
   (map! :leader
         (:prefix ("d" . "denote")
@@ -495,7 +495,7 @@ It would show up something like this instead:
 | [ 2003-09-01 ] note title                                 keyword1 keyword2 |
 |                                                                             |
 |-----------------------------------------------------------------------------|
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Simple denote completion formatting
 (defun my-format-denote-candidate (file)
   "Format denote file for completion display with right-aligned keywords."
@@ -550,7 +550,7 @@ It would show up something like this instead:
 **** Git Sync
 Automatic git sync for denote notes directory. Commits and pushes changes on save with smart commit messages, conflict handling, and offline support.
 ***** Configuration
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Denote Git Sync Configuration
 (defvar denote-git-auto-sync-enabled t
   "Enable automatic git sync on save for denote files.")
@@ -580,7 +580,7 @@ Automatic git sync for denote notes directory. Commits and pushes changes on sav
   "Timer object for idle sync.")
 #+end_src
 ***** Helper Functions
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Helper: Check if file is in denote directory
 (defun denote-in-denote-directory-p ()
   "Return t if current buffer file is in denote directory."
@@ -627,7 +627,7 @@ Automatic git sync for denote notes directory. Commits and pushes changes on sav
       (format "Update %d notes\n\n%s" file-count timestamp)))))
 #+end_src
 ***** Core Sync Function
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Core sync function with offline support
 (defun denote-git-sync (&optional quiet)
   "Safely sync denote directory with git: pull, commit, and push.
@@ -738,7 +738,7 @@ fi"
              (unless quiet (message "✗ Denote sync completed with unknown status"))))))))))
 #+end_src
 ***** Auto-Save Hook
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Auto-sync on save hook
 (defun denote-git-auto-sync-on-save ()
   "Automatically sync denote notes after saving if enabled."
@@ -749,7 +749,7 @@ fi"
 ;; Add to after-save-hook
 (add-hook 'after-save-hook #'denote-git-auto-sync-on-save)
 ***** Startup Sync
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Sync on daemon startup
 (defun denote-git-startup-sync ()
   "Sync denote notes when Emacs daemon starts."
@@ -760,7 +760,7 @@ fi"
 (add-hook 'after-init-hook #'denote-git-startup-sync)
 #+end_src
 ***** Periodic Sync Timer
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Start periodic sync timer
 (defun denote-git-start-periodic-sync ()
   "Start periodic sync timer for denote notes."
@@ -787,7 +787,7 @@ fi"
 (denote-git-start-periodic-sync)
 #+end_src
 ***** Idle Sync Timer
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 ;; Start idle sync timer
 (defun denote-git-start-idle-sync ()
   "Start idle sync timer for denote notes."
@@ -813,7 +813,7 @@ fi"
 (denote-git-start-idle-sync)
 #+end_src
 ***** Toggle
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 (defun denote-git-toggle-auto-sync ()
   "Toggle automatic git sync for denote notes."
   (interactive)
@@ -829,7 +829,7 @@ fi"
            (if denote-git-auto-sync-enabled "enabled" "disabled")))
 #+end_src
 ***** Key Binds
-#+begin_src elisp :tangle tangle/config.el
+#+begin_src elisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
                    (:prefix ("g" . "git")
@@ -840,11 +840,11 @@ fi"
 * Pulsar :enabled:
 Never loose your cursor again.
 ** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! pulsar)
 #+end_src
 ** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! pulsar
   :init
   (pulsar-global-mode 1)
@@ -863,11 +863,11 @@ Never loose your cursor again.
 * Ultra Scroll :enabled:
 Ultra smooth scrolling.
 ** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! ultra-scroll)
 #+end_src
 ** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! ultra-scroll
   :init
   (setq scroll-conservatively 3
@@ -879,11 +879,11 @@ Ultra smooth scrolling.
 * KDL Mode :enabled:
 =.kdl= file support for Niri WM config.
 ** Package
-#+begin_src emacs-lisp :tangle tangle/packages.el
+#+begin_src emacs-lisp :tangle packages.el
 (package! kdl-mode)
 #+end_src
 ** Config
-#+begin_src emacs-lisp :tangle tangle/config.el
+#+begin_src emacs-lisp :tangle config.el
 (use-package! kdl-mode
   :mode "\\.kdl\\'"
   :config
