@@ -544,7 +544,7 @@ It would show up something like this instead:
 **** Git Sync
 Automatic git sync for denote notes directory. Commits and pushes changes on save with smart commit messages, conflict handling, and offline support.
 ***** Configuration
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Denote Git Sync Configuration
 (defvar denote-git-auto-sync-enabled t
   "Enable automatic git sync on save for denote files.")
@@ -574,7 +574,7 @@ Automatic git sync for denote notes directory. Commits and pushes changes on sav
   "Timer object for idle sync.")
 #+end_src
 ***** Helper Functions
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Helper: Check if file is in denote directory
 (defun denote-in-denote-directory-p ()
   "Return t if current buffer file is in denote directory."
@@ -621,7 +621,7 @@ Automatic git sync for denote notes directory. Commits and pushes changes on sav
       (format "Update %d notes\n\n%s" file-count timestamp)))))
 #+end_src
 ***** Core Sync Function
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Core sync function with offline support
 (defun denote-git-sync (&optional quiet)
   "Safely sync denote directory with git: pull, commit, and push.
@@ -732,7 +732,7 @@ fi"
              (unless quiet (message "✗ Denote sync completed with unknown status"))))))))))
 #+end_src
 ***** Auto-Save Hook
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Auto-sync on save hook
 (defun denote-git-auto-sync-on-save ()
   "Automatically sync denote notes after saving if enabled."
@@ -743,7 +743,7 @@ fi"
 ;; Add to after-save-hook
 (add-hook 'after-save-hook #'denote-git-auto-sync-on-save)
 ***** Startup Sync
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Sync on daemon startup
 (defun denote-git-startup-sync ()
   "Sync denote notes when Emacs daemon starts."
@@ -754,7 +754,7 @@ fi"
 (add-hook 'after-init-hook #'denote-git-startup-sync)
 #+end_src
 ***** Periodic Sync Timer
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Start periodic sync timer
 (defun denote-git-start-periodic-sync ()
   "Start periodic sync timer for denote notes."
@@ -781,7 +781,7 @@ fi"
 (denote-git-start-periodic-sync)
 #+end_src
 ***** Idle Sync Timer
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 ;; Start idle sync timer
 (defun denote-git-start-idle-sync ()
   "Start idle sync timer for denote notes."
@@ -807,7 +807,7 @@ fi"
 (denote-git-start-idle-sync)
 #+end_src
 ***** Toggle
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 (defun denote-git-toggle-auto-sync ()
   "Toggle automatic git sync for denote notes."
   (interactive)
@@ -823,7 +823,7 @@ fi"
            (if denote-git-auto-sync-enabled "enabled" "disabled")))
 #+end_src
 ***** Key Binds
-#+begin_src elisp :tangle config.el
+#+begin_src emacs-lisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
                    (:prefix ("g" . "git")
