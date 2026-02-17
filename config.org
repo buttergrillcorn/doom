@@ -1,10 +1,11 @@
 #+title: My Literate Doom Emacs Configuration
+#+property: header-args :noweb yes
 #+startup: overview
 This my "literate" Doom Emacs configuration using org mode and babel tangle.
 * Bootstraps :enabled:
 Placeholder file templates for default Doom configuration files: =init.el= =config.el= =packages.el=.
 #+name: init.el
-#+begin_src emacs-lisp :tangle init.el :noweb yes
+#+begin_src emacs-lisp :tangle init.el
 ;;; init.el -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -235,7 +236,7 @@ These are core Emacs/Doom settings.
 'doom-one
 #+end_src
 ** Code :enabled:
-#+begin_src emacs-lisp :tangle config.el :noweb yes
+#+begin_src emacs-lisp :tangle config.el 
 (setq user-full-name <<user-name>>
       user-mail-address <<user-email>>) 
 (setq doom-font (font-spec :family <<default-font>> :size 16 :weight 'Regular)
@@ -274,7 +275,7 @@ Org mode notes directory.
 #+end_src
 ** Core :enabled:
 :PROPERTIES:
-:header-args: :tangle config.el :noweb yes
+:header-args: :tangle config.el 
 :END:
 Core/basic org mode configurations.
 *** Directory
@@ -323,7 +324,7 @@ Core Denote and Denote-org configuration.
 (package! denote-org)
 #+end_src
 ***** Config
-#+begin_src emacs-lisp :tangle config.el :noweb yes
+#+begin_src emacs-lisp :tangle config.el 
 (use-package! denote
   :hook
   (dired-mode . denote-dired-mode)
