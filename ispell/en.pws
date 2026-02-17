@@ -1,5 +1,6 @@
-personal_ws-1.1 en 21
+personal_ws-1.1 en 23
 cachy
+codeberg
 config
 customisable
 cyber
@@ -12,6 +13,7 @@ neovim
 niri
 nixos
 noto
+repo
 reproducibility
 stylix
 termux
