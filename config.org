@@ -194,7 +194,6 @@ everywhere
 ** Config
 #+name: config
 #+begin_src emacs-lisp
-literate
 (default +bindings +smartparens)
 #+end_src
 * Core
