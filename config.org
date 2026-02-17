@@ -164,6 +164,7 @@ Programming languages.
 #+name: lang
 #+begin_src emacs-lisp
 emacs-lisp
+(nix +lsp +tree-sitter)
 (json +lsp)
 (javascript +lsp +tree-sitter)
 (latex +cdlatex +lsp)
