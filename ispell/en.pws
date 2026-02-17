@@ -1,4 +1,4 @@
-personal_ws-1.1 en 14
+personal_ws-1.1 en 17
 cachy
 config
 cyber
@@ -10,6 +10,9 @@ modularise
 neovim
 niri
 nixos
+noto
 reproducibility
 stylix
+termux
 theming
+unstraightened
