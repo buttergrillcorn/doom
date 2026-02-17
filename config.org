@@ -542,295 +542,195 @@ It would show up something like this instead:
 (advice-add 'denote-file-prompt :override #'my-denote-file-prompt)
 #+end_src
 **** Git Sync
-Automatic git sync for denote notes directory. Commits and pushes changes on save with smart commit messages, conflict handling, and offline support.
+Automatic git sync for denote notes directory.
 ***** Configuration
 #+begin_src emacs-lisp :tangle config.el
-;; Denote Git Sync Configuration
-(defvar denote-git-auto-sync-enabled t
-  "Enable automatic git sync on save for denote files.")
+(require 'vc-git)
+(require 'filenotify)
 
-(defvar denote-git-directory (expand-file-name "<<org-dir>>")
-  "Path to the denote notes directory.")
+(defgroup denote-git-sync nil
+  "Git synchronization for Denote."
+  :group 'denote)
 
-(defvar denote-git-remote-name "origin"
-  "Git remote name to sync with.")
+(defcustom denote-git-sync-interval (* 15 60)
+  "Interval in seconds for periodic sync (default: 15 minutes)."
+  :type 'integer
+  :group 'denote-git-sync)
 
-(defvar denote-git-branch "main"
-  "Git branch name to sync with.")
+(defcustom denote-git-sync-verbose t
+  "If non-nil, show messages for successful syncs. Errors are always shown."
+  :type 'boolean
+  :group 'denote-git-sync)
 
-(defvar denote-git-sync-in-progress nil
-  "Lock to prevent concurrent sync operations.")
+(defvar denote-git-sync-process nil
+  "The current git sync process, if any.")
 
-(defvar denote-git-periodic-sync-interval (* 15 60)
-  "Interval in seconds for periodic sync (default: 15 minutes).")
+(defvar denote-git-sync-timer nil
+  "The periodic sync timer.")
 
-(defvar denote-git-idle-sync-delay (* 5 60)
-  "Idle time in seconds before triggering sync (default: 5 minutes).")
+(defvar denote-git-sync-debounce-timer nil
+  "Timer to debounce rapid file events.")
 
-(defvar denote-git-periodic-timer nil
-  "Timer object for periodic sync.")
-
-(defvar denote-git-idle-timer nil
-  "Timer object for idle sync.")
+(defvar denote-git-sync-watcher-descriptor nil
+  "The file notification watcher descriptor.")
 #+end_src
-***** Helper Functions
+
+***** Logging & Helpers
 #+begin_src emacs-lisp :tangle config.el
-;; Helper: Check if file is in denote directory
-(defun denote-in-denote-directory-p ()
-  "Return t if current buffer file is in denote directory."
-  (when buffer-file-name
-    (string-prefix-p (expand-file-name denote-git-directory)
-                     (expand-file-name buffer-file-name))))
-
-;; Helper: Check if git repository exists
-(defun denote-git-check-repo ()
-  "Check if denote directory is a git repository."
-  (let ((default-directory denote-git-directory))
-    (= 0 (call-process "git" nil nil nil "rev-parse" "--git-dir"))))
-
-;; Helper: Check internet connectivity
-(defun denote-git-check-connectivity ()
-  "Check if we can reach the git remote (basic connectivity test)."
-  (let ((default-directory denote-git-directory))
-    (= 0 (call-process "git" nil nil nil "ls-remote" "--exit-code" "-h" denote-git-remote-name))))
-
-;; Helper: Generate smart commit message
-(defun denote-git-format-commit-message ()
-  "Generate a commit message based on changed files and timestamp."
-  (let* ((default-directory denote-git-directory)
-         (timestamp (format-time-string "%Y-%m-%d %H:%M:%S"))
-         (status-output (shell-command-to-string "git status --short"))
-         (lines (split-string status-output "\n" t))
-         (changed-files (mapcar (lambda (line)
-                                  (if (string-match "^[AMD?]+ +\\(.+\\)$" line)
-                                      (file-name-nondirectory (match-string 1 line))
-                                    nil))
-                                lines))
-         (changed-files (delq nil changed-files))
-         (file-count (length changed-files)))
+(defun denote-git-sync-log (msg &optional level)
+  "Log MSG with LEVEL (:info, :success, :error)."
+  (let ((formatted-msg (format "[Denote-Sync] %s" msg)))
     (cond
-     ((= file-count 0)
-      (format "Update notes: %s" timestamp))
-     ((= file-count 1)
-      (format "Update %s\n\n%s" (car changed-files) timestamp))
-     ((<= file-count 3)
-      (format "Update %s\n\n%s"
-              (mapconcat 'identity changed-files ", ")
-              timestamp))
+     ((eq level :error)
+      (message "%s" (propertize formatted-msg 'face 'error)))
+     ((eq level :success)
+      (when denote-git-sync-verbose
+        (message "%s" (propertize formatted-msg 'face 'success))))
      (t
-      (format "Update %d notes\n\n%s" file-count timestamp)))))
+      (when denote-git-sync-verbose
+        (message "%s" formatted-msg))))))
+
+(defun denote-git-sync-in-repo-p ()
+  "Check if `denote-directory` is a git repository."
+  (when (and (stringp denote-directory) (file-directory-p denote-directory))
+    (let ((default-directory denote-directory))
+      (zerop (call-process "git" nil nil nil "rev-parse" "--is-inside-work-tree")))))
+
+(defun denote-git-sync-get-branch ()
+  "Get the current git branch name."
+  (when (and (stringp denote-directory) (file-directory-p denote-directory))
+    (let ((default-directory denote-directory))
+      (string-trim (shell-command-to-string "git rev-parse --abbrev-ref HEAD")))))
+
+(defun denote-git-sync-has-changes-p ()
+  "Check if there are local changes or unpushed commits."
+  (when (and (stringp denote-directory) (file-directory-p denote-directory))
+    (let ((default-directory denote-directory))
+      (or (not (string-empty-p (shell-command-to-string "git status --porcelain")))
+          (not (string-empty-p (shell-command-to-string "git log @{u}..HEAD 2>/dev/null")))))))
 #+end_src
-***** Core Sync Function
-#+begin_src emacs-lisp :tangle config.el
-;; Core sync function with offline support
-(defun denote-git-sync (&optional quiet)
-  "Safely sync denote directory with git: pull, commit, and push.
-Handles conflicts and offline scenarios gracefully. If QUIET is non-nil, suppress messages."
-  (interactive)
-  (if denote-git-sync-in-progress
-      (unless quiet (message "Denote sync already in progress, skipping..."))
-    (setq denote-git-sync-in-progress t)
-    (let ((default-directory denote-git-directory))
-      (unless (denote-git-check-repo)
-        (setq denote-git-sync-in-progress nil)
-        (error "Denote directory is not a git repository: %s" denote-git-directory))
 
-      ;; Run sync asynchronously
-      (make-process
-       :name "denote-git-sync"
-       :buffer "*denote-git-sync*"
-       :command (list "sh" "-c"
-                      (format "cd '%s' && \
-# Safety check: ensure no merge/rebase in progress
-if [ -f .git/MERGE_HEAD ] || [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then \
-  echo 'GIT_OPERATION_IN_PROGRESS'; \
-  exit 1; \
-fi && \
-# Try to fetch (test connectivity)
-if git fetch %s %s 2>&1; then \
-  echo 'ONLINE'; \
-  # Check for remote changes and merge
-  if ! git diff --quiet HEAD..%s/%s 2>&1; then \
-    if ! git merge --no-edit %s/%s 2>&1; then \
-      git merge --abort 2>&1; \
-      echo 'CONFLICT_DETECTED'; \
-      exit 1; \
-    fi; \
-  fi; \
-  # Check for local changes (modifications, deletions, additions)
-  if [ -z \"$(git status --porcelain)\" ]; then \
-    # No local changes, check for unpushed commits
-    if git log %s/%s..HEAD 2>&1 | grep -q 'commit'; then \
-      git push %s %s 2>&1 && echo 'PUSH_SUCCESS'; \
-    else \
-      echo 'NO_CHANGES'; \
-    fi; \
-  else \
-    # Has local changes (including deletions), commit and push
-    git add -A 2>&1 && \
-    git commit -m \"$(cat <<'COMMIT_MSG_EOF'\n%s\nCOMMIT_MSG_EOF\n)\" 2>&1 && \
-    git push %s %s 2>&1 && echo 'SYNC_SUCCESS'; \
-  fi; \
-else \
-  # Offline mode - commit locally only
-  echo 'OFFLINE'; \
-  if [ -n \"$(git status --porcelain)\" ]; then \
-    git add -A 2>&1 && \
-    git commit -m \"$(cat <<'COMMIT_MSG_EOF'\n%s\nCOMMIT_MSG_EOF\n)\" 2>&1 && \
-    echo 'OFFLINE_COMMIT_SUCCESS'; \
-  else \
-    echo 'OFFLINE_NO_CHANGES'; \
-  fi; \
-fi"
-                              denote-git-directory
-                              denote-git-remote-name
-                              denote-git-branch
-                              denote-git-remote-name
-                              denote-git-branch
-                              denote-git-remote-name
-                              denote-git-branch
-                              denote-git-remote-name
-                              denote-git-branch
-                              denote-git-remote-name
-                              denote-git-branch
-                              (denote-git-format-commit-message)
-                              denote-git-remote-name
-                              denote-git-branch
-                              (denote-git-format-commit-message)))
-       :sentinel
-       (lambda (process event)
-         (setq denote-git-sync-in-progress nil)
-         (let ((output (with-current-buffer (process-buffer process)
-                         (buffer-string))))
-           (cond
-            ((string-match-p "GIT_OPERATION_IN_PROGRESS" output)
-             (unless quiet
-               (message "⚠ Denote sync: Git operation in progress, skipping...")))
-            ((string-match-p "CONFLICT_DETECTED" output)
-             (message "⚠ Denote sync: Merge conflict detected! Please resolve manually in %s"
-                      denote-git-directory)
-             (when (fboundp 'alert)
-               (alert (format "Merge conflict in denote notes!\n\nPlease open %s and resolve conflicts manually."
-                              denote-git-directory)
-                      :title "Denote Git Sync - Conflict"
-                      :severity 'high)))
-            ((string-match-p "SYNC_SUCCESS" output)
-             (unless quiet (message "✓ Denote notes synced successfully")))
-            ((string-match-p "PUSH_SUCCESS" output)
-             (unless quiet (message "✓ Denote notes pushed successfully")))
-            ((string-match-p "OFFLINE_COMMIT_SUCCESS" output)
-             (unless quiet (message "📴 Offline: Changes committed locally (will push when online)")))
-            ((string-match-p "OFFLINE_NO_CHANGES" output)
-             (unless quiet (message "📴 Offline: No changes to commit")))
-            ((string-match-p "NO_CHANGES" output)
-             (unless quiet (message "✓ Denote notes already in sync")))
-            ((string-match-p "fatal\\|error" output)
-             (unless quiet
-               (message "✗ Denote sync failed: %s"
-                        (car (split-string output "\n" t)))))
-            (t
-             (unless quiet (message "✗ Denote sync completed with unknown status"))))))))))
+***** Async Process Management
+#+begin_src emacs-lisp :tangle config.el
+(defun denote-git-sync-run-git (args callback)
+  "Run git with ARGS asynchronously. Call CALLBACK on success."
+  (when (process-live-p denote-git-sync-process)
+    (kill-process denote-git-sync-process))
+  
+  (let ((default-directory denote-directory)
+        (out-buffer (get-buffer-create " *denote-git-sync-output*")))
+    (with-current-buffer out-buffer (erase-buffer))
+    (denote-git-sync-log (format "Running: git %s" (mapconcat 'identity args " ")))
+    
+    (setq denote-git-sync-process
+          (make-process
+           :name "denote-git-sync"
+           :buffer out-buffer
+           :command (cons "git" args)
+           :sentinel (lambda (proc event)
+                       (when (memq (process-status proc) '(exit signal))
+                         (if (zerop (process-exit-status proc))
+                             (funcall callback)
+                           (denote-git-sync-log (format "Git command failed: %s" (string-trim event)) :error))
+                         (setq denote-git-sync-process nil)))))))
 #+end_src
-***** Auto-Save Hook
-#+begin_src emacs-lisp :tangle config.el
-;; Auto-sync on save hook
-(defun denote-git-auto-sync-on-save ()
-  "Automatically sync denote notes after saving if enabled."
-  (when (and denote-git-auto-sync-enabled
-             (denote-in-denote-directory-p))
-    (denote-git-sync t)))  ; t = quiet mode
 
-;; Add to after-save-hook
-(add-hook 'after-save-hook #'denote-git-auto-sync-on-save)
-***** Startup Sync
+***** Sync Logic Steps
 #+begin_src emacs-lisp :tangle config.el
-;; Sync on daemon startup
-(defun denote-git-startup-sync ()
-  "Sync denote notes when Emacs daemon starts."
-  (when (and (daemonp) denote-git-auto-sync-enabled)
-    (run-with-timer 2 nil (lambda () (denote-git-sync t)))))
+(defun denote-git-sync-step-push ()
+  "Step 4: Push changes."
+  (let ((branch (denote-git-sync-get-branch)))
+    (if branch
+        (denote-git-sync-run-git 
+         (list "push" "origin" branch)
+         (lambda () (denote-git-sync-log "Sync complete!" :success)))
+      (denote-git-sync-log "Could not determine branch." :error))))
 
-;; Add to after-init-hook for daemon startup
-(add-hook 'after-init-hook #'denote-git-startup-sync)
+(defun denote-git-sync-step-pull ()
+  "Step 3: Pull (rebase) remote changes."
+  (let ((branch (denote-git-sync-get-branch)))
+    (if branch
+        (denote-git-sync-run-git 
+         (list "pull" "--rebase" "origin" branch)
+         #'denote-git-sync-step-push)
+      (denote-git-sync-log "Could not determine branch." :error))))
+
+(defun denote-git-sync-step-commit ()
+  "Step 2: Commit changes."
+  (let ((msg (format "Auto-sync: %s" (format-time-string "%Y-%m-%d %H:%M:%S"))))
+    (denote-git-sync-run-git 
+     (list "commit" "-m" msg)
+     #'denote-git-sync-step-pull)))
+
+(defun denote-git-sync-step-add ()
+  "Step 1: Add all changes."
+  (denote-git-sync-run-git 
+   (list "add" "-A")
+   #'denote-git-sync-step-commit))
 #+end_src
-***** Periodic Sync Timer
+
+***** Main Commands & Watcher
 #+begin_src emacs-lisp :tangle config.el
-;; Start periodic sync timer
-(defun denote-git-start-periodic-sync ()
-  "Start periodic sync timer for denote notes."
+(defun denote-git-sync ()
+  "Synchronize `denote-directory` with git remote.
+Flow: Add -> Commit -> Pull (Rebase) -> Push."
   (interactive)
-  (when denote-git-periodic-timer
-    (cancel-timer denote-git-periodic-timer))
-  (setq denote-git-periodic-timer
-        (run-at-time denote-git-periodic-sync-interval
-                     denote-git-periodic-sync-interval
-                     (lambda () (denote-git-sync t))))
-  (message "Denote periodic sync started (every %d minutes)"
-           (/ denote-git-periodic-sync-interval 60)))
+  (if (not (denote-git-sync-in-repo-p))
+      (denote-git-sync-log "Not a git repository." :error)
+    (if (denote-git-sync-has-changes-p)
+        (denote-git-sync-step-add)
+      (denote-git-sync-log "No changes to sync." :info))))
 
-;; Stop periodic sync timer
-(defun denote-git-stop-periodic-sync ()
-  "Stop periodic sync timer for denote notes."
-  (interactive)
-  (when denote-git-periodic-timer
-    (cancel-timer denote-git-periodic-timer)
-    (setq denote-git-periodic-timer nil)
-    (message "Denote periodic sync stopped")))
+(defun denote-git-sync-trigger (&optional _event)
+  "Trigger sync with debounce. Ignores _EVENT argument from file watcher."
+  (when (timerp denote-git-sync-debounce-timer)
+    (cancel-timer denote-git-sync-debounce-timer))
+  (setq denote-git-sync-debounce-timer
+        (run-with-timer 2 nil (lambda ()
+                                (denote-git-sync-log "Auto-sync triggered by file change..." :info)
+                                (denote-git-sync)))))
 
-;; Start periodic sync automatically
-(denote-git-start-periodic-sync)
-#+end_src
-***** Idle Sync Timer
-#+begin_src emacs-lisp :tangle config.el
-;; Start idle sync timer
-(defun denote-git-start-idle-sync ()
-  "Start idle sync timer for denote notes."
+(defun denote-git-sync-enable-watcher ()
+  "Enable file system watcher for denote directory."
   (interactive)
-  (when denote-git-idle-timer
-    (cancel-timer denote-git-idle-timer))
-  (setq denote-git-idle-timer
-        (run-with-idle-timer denote-git-idle-sync-delay t
-                             (lambda () (denote-git-sync t))))
-  (message "Denote idle sync started (after %d minutes idle)"
-           (/ denote-git-idle-sync-delay 60)))
-
-;; Stop idle sync timer
-(defun denote-git-stop-idle-sync ()
-  "Stop idle sync timer for denote notes."
-  (interactive)
-  (when denote-git-idle-timer
-    (cancel-timer denote-git-idle-timer)
-    (setq denote-git-idle-timer nil)
-    (message "Denote idle sync stopped")))
-
-;; Start idle sync automatically
-(denote-git-start-idle-sync)
-#+end_src
-***** Toggle
-#+begin_src emacs-lisp :tangle config.el
-(defun denote-git-toggle-auto-sync ()
-  "Toggle automatic git sync for denote notes."
-  (interactive)
-  (setq denote-git-auto-sync-enabled (not denote-git-auto-sync-enabled))
-  (if denote-git-auto-sync-enabled
+  (when denote-git-sync-watcher-descriptor
+    (file-notify-rm-watch denote-git-sync-watcher-descriptor))
+  
+  (if (and (stringp denote-directory) (file-directory-p denote-directory))
       (progn
-        (denote-git-start-periodic-sync)
-        (denote-git-start-idle-sync))
-    (progn
-      (denote-git-stop-periodic-sync)
-      (denote-git-stop-idle-sync)))
-  (message "Denote auto-sync %s"
-           (if denote-git-auto-sync-enabled "enabled" "disabled")))
+        (setq denote-git-sync-watcher-descriptor
+              (file-notify-add-watch denote-directory
+                                     '(change) ;; covers create, delete, modify, rename
+                                     #'denote-git-sync-trigger))
+        (message "Denote Git Sync watcher enabled on %s" denote-directory))
+    (message "Cannot enable watcher: denote-directory is invalid.")))
+
+(defun denote-git-sync-disable-watcher ()
+  "Disable file system watcher."
+  (interactive)
+  (when denote-git-sync-watcher-descriptor
+    (file-notify-rm-watch denote-git-sync-watcher-descriptor)
+    (setq denote-git-sync-watcher-descriptor nil))
+  (message "Denote Git Sync watcher disabled."))
+
+;; Initialize Logic
+(after! denote
+  ;; Enable watcher
+  (denote-git-sync-enable-watcher)
+  
+  ;; Fallback: Enable periodic sync
+  (when denote-git-sync-timer (cancel-timer denote-git-sync-timer))
+  (setq denote-git-sync-timer
+        (run-at-time nil denote-git-sync-interval #'denote-git-sync)))
 #+end_src
+
 ***** Key Binds
 #+begin_src emacs-lisp :tangle config.el
 (map! :leader
       (:prefix-map ("d" . "denote")
                    (:prefix ("g" . "git")
-                    :desc "Sync notes" "s" #'denote-git-sync
-                    :desc "Toggle auto-sync" "t" #'denote-git-toggle-auto-sync)))
+                    :desc "Sync notes" "s" #'denote-git-sync)))
 #+end_src
-
 * Pulsar :enabled:
 Never loose your cursor again.
 ** Package
