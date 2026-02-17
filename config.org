@@ -885,11 +885,11 @@ Ultra smooth scrolling.
 #+end_src
 * Spelling :enabled:
 ** Config
-#+begin_src emacs-lisp config.el
+#+begin_src emacs-lisp :tangle config.el
 (after! ispell
   (setq ispell-program-name "aspell"
         ispell-aspell-dict-dir (executable-find "aspell")
         ispell-dictionary "en_GB"
-        ispell-personal-dictionary (expand-file-name "ispell/en.pws")
-        ispell-extra-args '("--encoding=utf-8")))
+        ispell-extra-args '("--encoding=utf-8"))
+  (setq ispell-personal-dictionary (expand-file-name "doom/ispell/en.pws" "~")))
 #+end_src
