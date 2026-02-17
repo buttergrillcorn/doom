@@ -1,0 +1,40 @@
+#+title: My Literate Doom Emacs Config
+#+author: Yu Li (James)
+
+* Overview
+My personal literate [[https://github.com/doomemacs/doomemacs][Doom Emacs]] configuration using Org Mode that works with my [[https://github.com/buttergrillcorn/flake][NixOS Flake]] and also other systems (such as in [[https://termux.dev/en/][Termux]] on my Android phone).
+
+I have designed it to be portable PC's and mobile device(s).
+
+* Main Features
++ Literate :: This lets me (and anyone else) read and understand the code base with ease.
++ Cross-Platform :: Primarily designed for my [[https://github.com/buttergrillcorn/flake][Nix OS setup]] (utilising
+  [[https://github.com/marienz/nix-doom-emacs-unstraightened][Nix-Doom-Emacs-Unstraightened]]) but works just as well on non-Nix systems, too.
++ Denote :: My note taking workflow relies heavily on org mode and [[https://protesilaos.com/emacs/denote][Denote]], with extra
+  packages in addition.
++ Quality of Life :: Packages that enhances the experience.
++ Programming :: Support for LSP and languages that I use.
+  
+* Installation
+** Prerequisites
+Fonts that I use:
++ Mono (Main font) :: Maple Mono NF (for Chinese mono-space alignment)
++ Variable (Sans-serif) :: Noto Sans CJK SC
++ Serif :: Noto Serif CJK SC
+  
+** Method 1: Non-Nix
+I have provided a simple =setup.sh= script that will set everything up for you.
+It will check for =Emacs= and =Doom Emacs= and install Doom Emacs if it isn't already.
+However, it is recommended that you install Emacs from your package manager.
+
+Simply run:
+#+begin_src bash
+./setup.sh
+#+end_src
+
+** Method 2: NixOS via Flake
+See my [[https://github.com/buttergrillcorn/flake][personal flake setup]] for details.
+
+In particular:
++ =flake.nix=
++ =modules/features/doom/default.nix=
