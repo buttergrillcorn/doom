@@ -793,3 +793,20 @@ Ultra smooth scrolling.
         ispell-extra-args '("--encoding=utf-8"))
   (setq ispell-personal-dictionary (expand-file-name "doom/ispell/en.pws" "~")))
 #+end_src
+* Spacious Padding :enabled:
+** Package
+#+begin_src emacs-lisp :tangle packages.el
+(package! spacious-padding)
+#+end_src
+** Config
+#+begin_src emacs-lisp :tangle config.el
+(setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8))
+
+(spacious-padding-mode 1)
+#+end_src
