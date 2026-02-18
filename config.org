@@ -314,6 +314,22 @@ Auto tangle files upon save, using the =#+auto_tangle: t= file property.
                                        "~/example.org"
                                        "~/example2.org"))
 #+end_src
+*** View Mode :enabled:
+**** Package
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-view-mode)
+#+end_src
+**** Config
+#+begin_src emacs-lisp :tangle config.el
+(use-package org-view-mode
+  :ensure t)
+#+end_src
+**** Key Bind
+#+begin_src emacs-lisp :tangle config.el
+(map! :leader
+      (:prefix "t"
+       :desc "Org View Mode" "V" #'org-view-mode))
+#+end_src
 *** Denote :enabled:
 **** Core
 Core Denote and Denote-org configuration.
