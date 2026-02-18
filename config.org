@@ -232,7 +232,7 @@ These are core Emacs/Doom settings.
 *** Theme
 #+name: theme
 #+begin_src emacs-lisp
-'doom-one
+'doom-1337
 #+end_src
 ** Code :enabled:
 #+begin_src emacs-lisp :tangle config.el 
