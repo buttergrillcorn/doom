@@ -182,6 +182,7 @@ emacs-lisp
 Email in Emacs...
 #+name: email
 #+begin_src emacs-lisp
+(mu4e +org)
 #+end_src
 ** App
 Applications...?
@@ -830,4 +831,31 @@ Ultra smooth scrolling.
          :scroll-bar-width 8))
 
 (spacious-padding-mode 1)
+#+end_src
+* Email :enabled:
+** Config
+#+begin_src emacs-lisp :tangle config.el
+(after! mu4e
+  (setq mu4e-mu-binary (executable-find "mu"))
+  (setq mu4e-update-interval 300)
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-contexts
+        (list
+         (make-mu4e-context
+          :name "Mailbox"
+          :enter-func (lambda () (mu4e-message "Switch to Mailbox"))
+          :match-func (lambda (msg)
+                        (when msg
+                          (string-prefix-p "/Mailbox" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "jamesyuli@mailbox.org")
+                  (user-full-name . "Yu Li")
+                  (mu4e-drafts-folder . "/Mailbox/Drafts")
+                  (mu4e-sent-folder . "/Mailbox/Sent")
+                  (mu4e-refile-folder . "/Mailbox/Archive")
+                  (mu4e-trash-folder . "/Mailbox/Trash")))))
+  (setq mu4e-context-policy 'pick-first))
+#+end_src
+** Un-pin =org-msg= for NixOS
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-msg :pin nil)
 #+end_src
