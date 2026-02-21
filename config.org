@@ -229,10 +229,15 @@ These are core Emacs/Doom settings.
 #+begin_src emacs-lisp
 "Symbols Nerd Font Mono"
 #+end_src
-*** Theme
+*** Themes :enabled:
+#+begin_src emacs-lisp :tangle packages.el
+(package! standard-themes)
+(package! ef-themes)
+#+end_src
+
 #+name: theme
 #+begin_src emacs-lisp
-'doom-1337
+'ef-dream
 #+end_src
 ** Code :enabled:
 #+begin_src emacs-lisp :tangle config.el 
