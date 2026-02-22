@@ -197,7 +197,7 @@ everywhere
 #+begin_src emacs-lisp
 (default +bindings +smartparens)
 #+end_src
-* Core
+* Core :enabled:
 These are core Emacs/Doom settings.
 ** Variables
 *** User Information
@@ -230,7 +230,7 @@ These are core Emacs/Doom settings.
 #+begin_src emacs-lisp
 "Symbols Nerd Font Mono"
 #+end_src
-*** Themes :enabled:
+*** Themes
 #+begin_src emacs-lisp :tangle packages.el
 (package! standard-themes)
 (package! ef-themes)
@@ -240,7 +240,7 @@ These are core Emacs/Doom settings.
 #+begin_src emacs-lisp
 'ef-dream
 #+end_src
-** Code :enabled:
+** Code
 #+begin_src emacs-lisp :tangle config.el 
 (setq user-full-name <<user-name>>
       user-mail-address <<user-email>>) 
@@ -272,7 +272,7 @@ Make =s= to use =avy= instead, mimicing =flash.nvim=.
 #+end_src
 * Org Mode
 Make sure to =enable= "Extras" packages/modules with *:enabled:* tag.
-** Variables
+** Variables :enabled:
 Org mode notes directory.
 #+name: org-dir
 #+begin_src emacs-lisp
@@ -280,7 +280,7 @@ Org mode notes directory.
 #+end_src
 ** Core :enabled:
 :PROPERTIES:
-:header-args: :tangle config.el 
+:header-args: :tangle config.el :noweb yes
 :END:
 Core/basic org mode configurations.
 *** Directory
