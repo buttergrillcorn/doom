@@ -289,8 +289,8 @@ Org mode notes directory.
 Core/basic org mode configurations.
 *** Directory
 #+begin_src emacs-lisp
-(setq org-directory "<<org-dir>>"
-      org-agenda-files '("<<org-dir>>"))
+(setq org-directory "<<org-dir>>")
+;; (setq org-agenda-files '("<<org-dir>>")
 #+end_src
 *** Babel Languages
 #+begin_src emacs-lisp
@@ -756,6 +756,17 @@ Flow: Add -> Commit -> Pull (Rebase) -> Push."
       (:prefix-map ("d" . "denote")
                    (:prefix ("g" . "git")
                     :desc "Sync notes" "s" #'denote-git-sync)))
+#+end_src
+**** Agenda
+Add notes with =todo= keyword to agenda.
+#+begin_src emacs-lisp :tangle config.el
+(defun my/denote-refresh-agenda-files ()
+  "Refresh agenda files using a regex for todo and project tags"
+  (interactive)
+  (setq org-agenda-files
+        (denote-directory-files "_\\(todo\\|project\\)")))
+
+(add-hook 'org-agenda-prepare-finalize-hook #'my/denote-add-to-agenda-files)
 #+end_src
 * Pulsar :enabled:
 Never loose your cursor again.
