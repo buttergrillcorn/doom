@@ -255,6 +255,10 @@ These are core Emacs/Doom settings.
 :PROPERTIES:
 :header-args: :tangle config.el
 :END:
+** Visual
+#+begin_src emacs-lisp
+(setq display-line-numbers-type 'relative)
+#+end_src
 ** Which-key Buffer
 Map =Ctrl n/p= to cyble =which-key= buffer pages. 
 #+begin_src emacs-lisp
