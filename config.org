@@ -12,9 +12,6 @@ Placeholder file templates for default Doom configuration files: =init.el= =conf
 ;;;  DO NOT EDIT DIRECTLY, THIS FILE IS AUTO-GENERATED WITH ORG-BABEL-TANGLE!  ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq doom-leader-key ","
-      doom-localleader-key "\\")
-
 (doom! :input
        <<input>>
        :completion
@@ -876,16 +873,4 @@ Ultra smooth scrolling.
 ** Un-pin =org-msg= for NixOS
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-msg :pin nil)
-#+end_src
-* EWM :enabled:
-** Config
-Fix for EWM
-#+begin_src emacs-lisp :tangle config.el
-(when (daemonp)
-  (add-hook 'after-make-frame-functions
-            (defun +ewm-trigger-server-hooks-h (frame)
-              (when (display-graphic-p frame)
-                (remove-hook 'after-make-frame-functions #'+ewm-trigger-server-hooks-h)
-                (with-selected-frame frame
-                  (run-hooks 'server-after-make-frame-hook))))))
 #+end_src
