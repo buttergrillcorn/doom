@@ -825,7 +825,6 @@ Ultra smooth scrolling.
 #+begin_src emacs-lisp :tangle config.el
 (after! ispell
   (setq ispell-program-name "aspell"
-        ispell-aspell-dict-dir (executable-find "aspell")
         ispell-dictionary "en_GB"
         ispell-extra-args '("--encoding=utf-8"))
   (setq ispell-personal-dictionary (expand-file-name "doom/ispell/en.pws" "~")))
