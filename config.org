@@ -150,6 +150,7 @@ make
 pdf
 rgb
 tree-sitter
+direnv
 #+end_src
 
 ** OS

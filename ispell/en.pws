@@ -1,4 +1,4 @@
-personal_ws-1.1 en 23
+personal_ws-1.1 en 27
 cachy
 codeberg
 config
@@ -9,10 +9,13 @@ init
 lenovo
 libvert
 modularise
+modularity
 neovim
 niri
 nixos
 noto
+pomi
+pomodoro
 repo
 reproducibility
 stylix
@@ -22,3 +25,4 @@ unstraightened
 waybar
 wayland
 yu
+zettelkasten
